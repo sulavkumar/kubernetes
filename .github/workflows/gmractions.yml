@@ -22,6 +22,7 @@ jobs:
           sysdig-secure-url: "https://app.au1.sysdig.com"
           sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
           image-tag: "nginx:latest"
+          override-pullstring: "docker.io/library/nginx:latest"
           stop-on-failed-policy-eval: true
           use-policies: "Default"
 
