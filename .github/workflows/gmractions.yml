@@ -26,10 +26,10 @@ jobs:
       - name: Scan with Sysdig
         uses: sysdiglabs/scan-action@v4
         with:
-          image: nginx:latest
+          image-tag: nginx:latest
           pull-string: docker-daemon:nginx:latest
           sysdig-secure-url: https://app.au1.sysdig.com
-          sysdig-token: ${{ secrets.SYSDIG_TOKEN }}
+          sysdig-token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
           use-docker-daemon: true
 
       - name: Upload Sysdig Scan Report
