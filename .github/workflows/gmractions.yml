@@ -4,6 +4,7 @@ on:
   push:
     branches: [ "master" ]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   scan:
@@ -12,18 +13,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      
       - name: Pull sample image
         run: docker pull nginx:latest
 
       - name: Sysdig Image Scan
         uses: sysdiglabs/scan-action@v4
         with:
-          sysdig_secure_url: "https://app.au1.sysdig.com"   # or in1 / au1 etc
-          sysdig_secure_api_token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
-          image_tag: "myapp:latest"        # Image to scan
-          fail_on_critical: true           # Optional – break build on findings
-          policy: "Default"                # Optional – enforce specific policy
+          sysdig-secure-url: "https://app.au1.sysdig.com"
+          sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
+          image-tag: "nginx:latest"
+          stop-on-failed-policy-eval: true
+          use-policies: "Default"
 
       - name: Upload Sysdig Scan Report
         uses: actions/upload-artifact@v4
