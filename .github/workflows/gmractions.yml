@@ -13,6 +13,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get remove -y podman buildah
+          curl -fsSL https://get.docker.com | sudo sh
+          sudo usermod -aG docker $USER
+
       - name: Pull sample image
         run: docker pull nginx:latest
 
@@ -22,7 +29,7 @@ jobs:
           sysdig-secure-url: "https://app.au1.sysdig.com"
           sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
           image-tag: "nginx:latest"
-          override-pullstring: "docker.io/library/nginx:latest"
+          override-pullstring: "docker-daemon:myapp:latest"
           stop-on-failed-policy-eval: true
           use-policies: "Default"
 
