@@ -13,32 +13,24 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Remove Podman and Install Docker
+      - name: Disable Podman
         run: |
-          sudo systemctl stop podman.socket || true
-          sudo systemctl disable podman.socket || true
-          sudo apt-get update
-          sudo apt-get remove -y podman buildah containers-common
-          curl -fsSL https://get.docker.com | sudo sh
-          sudo systemctl enable docker
-          sudo systemctl start docker
-          sudo usermod -aG docker $USER
-          newgrp docker <<EOF
-          docker version
-          EOF
+         sudo systemctl stop podman.socket || true
+         sudo systemctl disable podman.socket || true
+         sudo apt-get update
+         sudo apt-get remove -y podman uidmap crun containers-storage || true
 
       - name: Pull sample image
         run: docker pull nginx:latest
 
-      - name: Sysdig Image Scan
+      - name: Scan with Sysdig
         uses: sysdiglabs/scan-action@v4
         with:
-          sysdig-secure-url: "https://app.au1.sysdig.com"
-          sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
-          image-tag: "nginx:latest"
-          override-pullstring: "docker-daemon:myapp:latest"
-          stop-on-failed-policy-eval: true
-          use-policies: "Default"
+          image: nginx:latest
+          pull-string: docker-daemon:nginx:latest
+          sysdig-secure-url: https://app.au1.sysdig.com
+          sysdig-token: ${{ secrets.SYSDIG_TOKEN }}
+          use-docker-daemon: true
 
       - name: Upload Sysdig Scan Report
         uses: actions/upload-artifact@v4
