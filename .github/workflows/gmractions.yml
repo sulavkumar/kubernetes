@@ -12,9 +12,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: |
-          docker build -t myapp:latest .
+      
+      - name: Pull sample image
+        run: docker pull nginx:latest
 
       - name: Sysdig Image Scan
         uses: sysdiglabs/scan-action@v4
