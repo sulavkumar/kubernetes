@@ -1,51 +1,30 @@
-# This is a basic workflow to help you get started with Actions
+name: Sysdig Image Scan
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  scan:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Build Docker image
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          docker build -t myapp:latest .
 
-      # Sysdig Scan
       - name: Sysdig Image Scan
         uses: sysdiglabs/scan-action@v4
         with:
-          sysdig_secure_url: "https://https://app.au1.sysdig.com/"   # or in1 / au1 etc
+          sysdig_secure_url: "https://app.au1.sysdig.com"   # or in1 / au1 etc
           sysdig_secure_api_token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
           image_tag: "myapp:latest"        # Image to scan
           fail_on_critical: true           # Optional – break build on findings
           policy: "Default"                # Optional – enforce specific policy
-          
-      # Upload Scan results to sysdig portal
+
       - name: Upload Sysdig Scan Report
         uses: actions/upload-artifact@v4
         with:
