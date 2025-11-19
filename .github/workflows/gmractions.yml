@@ -26,7 +26,7 @@ jobs:
       - name: Scan with Sysdig
         uses: sysdiglabs/scan-action@v4
         with:
-          image-tag: nginx:latest
+          image-tag: testname:latest
           pull-string: docker-daemon:nginx:latest
           sysdig-secure-url: https://app.au1.sysdig.com
           sysdig-secure-token: ${{ secrets.SYSDIG_SECURE_TOKEN }}
